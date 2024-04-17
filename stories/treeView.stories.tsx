@@ -9,15 +9,15 @@ export default {
 export const Simple: StoryObj = {
   render: () => (
     <TreeView.Root>
-      <TreeView.Node value="src">
+      <TreeView.Group value="src">
         <TreeView.Trigger>src</TreeView.Trigger>
         <TreeView.Content>
-          <TreeView.Node value="src/index.ts">index.ts</TreeView.Node>
-          <TreeView.Node value="src/treeView.tsx">treeView.tsx</TreeView.Node>
+          <TreeView.Item value="src/index.ts">index.ts</TreeView.Item>
+          <TreeView.Item value="src/treeView.tsx">treeView.tsx</TreeView.Item>
         </TreeView.Content>
-      </TreeView.Node>
-      <TreeView.Node value="tsconfig.json">tsconfig.json</TreeView.Node>
-      <TreeView.Node value="package.json">package.json</TreeView.Node>
+      </TreeView.Group>
+      <TreeView.Item value="tsconfig.json">tsconfig.json</TreeView.Item>
+      <TreeView.Item value="package.json">package.json</TreeView.Item>
     </TreeView.Root>
   )
 }

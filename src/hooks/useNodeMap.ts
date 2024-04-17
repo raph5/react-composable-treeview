@@ -2,52 +2,45 @@ import { useCallback, useRef } from "react"
 
 export interface TreeNode {
   value: string
-  parent: string|null
-  firstChild: string|null
-  nextSibling: string|null
-  previousSibling: string|null
+  parent: string
+  children: Record<string, string>
+  isGroup: boolean
 }
 
 
 export type useNodeMapHook = [
-  React.RefObject<Record<string, TreeNode>>,                                       // node map
-  (value: string, parent: string|null) => void,                                    // setNodeParent
-  (value: string, firstChild: string|null) => void,                                // setNodeChild
-  (value: string, nextSibling: string|null, previousSibling: string|null) => void  // setNodeSiblings
+  React.RefObject<Record<string, TreeNode>>,                                // nodeMap
+  (value: string, parent: string, index: number, isGroup: boolean) => void  // pushToNodeMap
 ]
 
 export function useNodeMap(): useNodeMapHook {
+  const nodeMap = useRef<Record<string, TreeNode>>({
+    '': { value: '', parent: '', children: {}, isGroup: true }
+  })
+  
+  const waitingList = useRef<Record<string, [string, string, number, boolean][]>>({})
 
-  const nodeMap = useRef<Record<string, TreeNode>>({})
+  const pushToNodeMap = useCallback((value: string, parent: string, index: number, isGroup: boolean) => {
+    if(!nodeMap.current[parent]) {
+      if(!waitingList.current[parent]) {
+        waitingList.current[parent] = [[value, parent, index, isGroup]]
+      }
+      else {
+        waitingList.current[parent].push([value, parent, index, isGroup])
+      }
+      return
+    }
 
-  const setNodeParent = useCallback((value: string, parent: string|null) => {
-    if(nodeMap.current[value]) {
-      nodeMap.current[value].parent = parent
-    }
-    else {
-      nodeMap.current[value] = { value, parent, firstChild: null, nextSibling: null, previousSibling: null }
-    }
-  }, [])
+    nodeMap.current[value] = { value, parent, children: {}, isGroup }
+    nodeMap.current[parent].children[index] = value
 
-  const setNodeChild = useCallback((value: string, firstChild: string|null) => {
-    if(nodeMap.current[value]) {
-      nodeMap.current[value].firstChild = firstChild
-    }
-    else {
-      nodeMap.current[value] = { value, firstChild, parent: null, nextSibling: null, previousSibling: null }
-    }
-  }, [])
-
-  const setNodeSiblings = useCallback((value: string, nextSibling: string|null, previousSibling: string|null) => {
-    if(nodeMap.current[value]) {
-      nodeMap.current[value].nextSibling = nextSibling
-      nodeMap.current[value].previousSibling = previousSibling
-    }
-    else {
-      nodeMap.current[value] = { value, nextSibling, previousSibling, parent: null, firstChild: null }
+    if(waitingList.current[value]) {
+      for(const args of waitingList.current[value]) {
+        pushToNodeMap(...args)
+      }
+      delete waitingList.current[value]
     }
   }, [])
 
-  return [nodeMap, setNodeParent, setNodeChild, setNodeSiblings]
-
+  return [nodeMap, pushToNodeMap]
 }

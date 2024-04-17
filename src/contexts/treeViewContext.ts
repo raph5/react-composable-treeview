@@ -1,15 +1,15 @@
 import React, { createContext } from "react";
-import { TreeNode } from "../hooks/useNodeMap";
+import { useNodeMapHook } from "../hooks/useNodeMap";
 
 export interface TreeViewContextType {
   rootValue: Set<string>
-  setSelection: React.Dispatch<React.SetStateAction<string|null>>
-  selection: string|null
   setRootValue: React.Dispatch<React.SetStateAction<Set<string>>>
-  nodeMap: React.RefObject<Record<string, TreeNode>>,
-  setNodeParent: (value: string, parent: string|null) => void,
-  setNodeChild: (value: string, firstChild: string|null) => void,
-  setNodeSiblings: (value: string, nextSibling: string|null, previousSibling: string|null) => void
+  selection: string|null
+  setSelection: React.Dispatch<React.SetStateAction<string|null>>
+  focus: string
+  setFocus: React.Dispatch<React.SetStateAction<Set<string>>>
+  nodeMap: useNodeMapHook[0]
+  pushToNodeMap: useNodeMapHook[1]
 }
 
 export const TreeViewContext = createContext<TreeViewContextType>({
@@ -17,8 +17,8 @@ export const TreeViewContext = createContext<TreeViewContextType>({
   setRootValue: () => {},
   selection: null,
   setSelection: () => {},
+  focus: '',
+  setFocus: () => {},
   nodeMap: { current: {} },
-  setNodeParent: () => {},
-  setNodeChild: () => {},
-  setNodeSiblings: () => {}
+  pushToNodeMap: () => {},
 })

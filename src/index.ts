@@ -1,21 +1,24 @@
 import {
   TreeViewRoot,
-  TreeViewNode,
+  TreeViewGroup,
   TreeViewTrigger,
-  TreeViewContent
+  TreeViewContent,
+  TreeViewItem
 } from "./treeView"
 export type {
-  TreeViewNodeProps,
+  TreeViewGroupProps as TreeViewNodeProps,
   TreeViewRootProps,
   TreeViewContentProps,
-  TreeViewTriggerProps
+  TreeViewTriggerProps,
+  TreeViewItemProps
 } from "./treeView"
 
 const TreeView = {
   Root: TreeViewRoot,
-  Node: TreeViewNode,
+  Group: TreeViewGroup,
   Trigger: TreeViewTrigger,
-  Content: TreeViewContent
+  Content: TreeViewContent,
+  Item: TreeViewItem
 }
 
 export default TreeView

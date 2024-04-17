@@ -1,11 +1,14 @@
 import type React from "react";
-import { forwardRef, useContext, useRef, useState } from "react";
+import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import { TreeViewContext } from "./contexts/treeViewContext";
 import { useNodeMap } from "./hooks/useNodeMap";
-import { NodeContext } from "./contexts/nodeContext";
+import { GroupContext, GroupContextType } from "./contexts/groupContext";
 import { useControlledState } from "./hooks/useControlledState";
 import { composeEventHandlers } from "./utils";
 import { useComposedRefs } from "./hooks/useComposedRefs";
+import { useIndex } from "./hooks/useIndex";
+
+const TREE_KEYS = [ 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'Home', 'End', 'Enter' ]
 
 
 export interface TreeViewRootProps extends Omit<React.HTMLAttributes<HTMLUListElement>, 'defaultValue'> {
@@ -14,67 +17,132 @@ export interface TreeViewRootProps extends Omit<React.HTMLAttributes<HTMLUListEl
   defaultValue?: Set<string>
 }
 
-export interface TreeViewNodeProps extends React.HTMLAttributes<HTMLLIElement> {
+export interface TreeViewGroupProps extends React.HTMLAttributes<HTMLLIElement> {
   value: string
 }
 
-export interface TreeViewTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {
-  
+export interface TreeViewItemProps extends React.HTMLAttributes<HTMLLIElement> {
+  value: string
 }
+
+export interface TreeViewTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {}
 
 export interface TreeViewContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 
-export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ value: controlledValue, onValueChange, defaultValue, ...props }, ref) => {
-  const [nodeMap, setNodeParent, setNodeChild, setNodeSiblings] = useNodeMap()
+export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ value: controlledValue, onValueChange, defaultValue, onKeyDown, ...props }, ref) => {
+  const [nodeMap, pushToNodeMap] = useNodeMap()
+  const getIndex = useIndex()
+
+  // states
   const [value, setValue] = useControlledState(controlledValue, onValueChange, defaultValue ?? new Set())
   const [selection, setSelection] = useState<string|null>(null)
 
-  setTimeout(() => setSelection('tsconfig.json'), 1000)
-  // TODO: check if li .focus() work
+  // refs
+  const rootRef = useRef<HTMLUListElement>(null)
+  const composedRefs = useComposedRefs(rootRef, ref)
+
+  // TODO: wrap function in useCallback
+  function handleKeydown(event: React.KeyboardEvent<HTMLUListElement>) {
+    if(!TREE_KEYS.includes(event.key) || !nodeMap.current || !selection) return
+
+    switch(event.key) {
+      case 'ArrowRight':
+        if(!nodeMap.current[selection].isGroup) break
+        if(value.has(selection)) {
+          setSelection(nodeMap.current[selection].children[0])
+        } else {
+          setValue(prev => {
+            prev.add(selection)
+            return new Set(prev)
+          })
+        }
+        break
+
+      case 'ArrowLeft':
+        if(value.has(selection)) {
+          setValue(prev => {
+            prev.delete(selection)
+            return new Set(prev)
+          })
+        } else if(nodeMap.current[selection].parent != '') {
+          setSelection(nodeMap.current[selection].parent)
+        }
+        break
+    }
+  }
+
+  const onKeyDownHandler = composeEventHandlers(onKeyDown, handleKeydown)
 
   return (
-    <TreeViewContext.Provider value={{ rootValue: value, setRootValue: setValue, selection, setSelection, nodeMap, setNodeParent, setNodeChild, setNodeSiblings }}>
-      <NodeContext.Provider value={{ parent: null }}>
+    <TreeViewContext.Provider value={{ rootValue: value, setRootValue: setValue, selection, setSelection, nodeMap, pushToNodeMap }}>
+      <GroupContext.Provider value={{ parent: '', getIndex }}>
         <ul
-          ref={ref}
+          ref={composedRefs}
           role="tree"
           aria-multiselectable="false"
+          onKeyDown={onKeyDownHandler}
           {...props}
         />
-      </NodeContext.Provider>
+      </GroupContext.Provider>
     </TreeViewContext.Provider>
   )
 })
 
-export const TreeViewNode = forwardRef<HTMLLIElement, TreeViewNodeProps>(({ value, ...props }, ref) => {
-  const { rootValue, selection, nodeMap } = useContext(TreeViewContext)
-  const { parent } = useContext(NodeContext)
+export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, onFocus, ...props }, ref) => {
+  // context
+  const { selection, pushToNodeMap } = useContext(TreeViewContext)
+  const { parent, getIndex } = useContext(GroupContext)
+
+  const index = getIndex()
+  pushToNodeMap(value, parent, index, false)
+
+  return (
+    <li
+      ref={ref}
+      role="treenode"
+      aria-selected={selection == value}
+      tabIndex={selection == value || selection == null && parent == '' && index == 0 ? 0 : -1}
+      {...props}
+    />
+  )
+})
+
+export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ value, ...props }, ref) => {
+  const chilGetIndex = useIndex()
+  
+  // context
+  const { rootValue, selection, pushToNodeMap } = useContext(TreeViewContext)
+  const { parent, getIndex } = useContext(GroupContext)
+  
+  // refs
   const nodeRef = useRef<HTMLLIElement>(null)
   const composedRefs = useComposedRefs(nodeRef, ref)
 
+  const index = getIndex()
+  pushToNodeMap(value, parent, index, true)
   if(selection == value) nodeRef.current?.focus()
 
   return (
-    <NodeContext.Provider value={{ parent: value }}>
+    <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex }}>
       <li
         ref={composedRefs}
         role="treenode"
         aria-expanded={rootValue.has(value)}
         aria-selected={selection == value}
-        tabIndex={selection == value ? 0 : -1}
+        tabIndex={selection == value || selection == null && parent == '' && index == 0 ? 0 : -1}
         {...props}
       />
-    </NodeContext.Provider>
+    </GroupContext.Provider>
   )
 })
 
 export const TreeViewTrigger = forwardRef<HTMLButtonElement, TreeViewTriggerProps>(({ onClick, ...props }, ref) => {
-  const { rootValue, setRootValue, setSelection } = useContext(TreeViewContext)
-  const { parent } = useContext(NodeContext) as { parent: string }
-  const onClickHandler = composeEventHandlers(onClick, toggle)
+  // context
+  const { setRootValue, setSelection } = useContext(TreeViewContext)
+  const { parent } = useContext(GroupContext)
   
-  function toggle() {
+  function handleClick() {
     setSelection(parent)
     setRootValue(prev => {
       if(prev.has(parent)) {
@@ -87,8 +155,10 @@ export const TreeViewTrigger = forwardRef<HTMLButtonElement, TreeViewTriggerProp
     })
   }
 
+  const onClickHandler = composeEventHandlers(onClick, handleClick)
+
   return (
-    <button
+    <span
       ref={ref}
       onClick={onClickHandler}
       {...props}
@@ -97,8 +167,9 @@ export const TreeViewTrigger = forwardRef<HTMLButtonElement, TreeViewTriggerProp
 })
 
 export const TreeViewContent = forwardRef<HTMLDivElement, TreeViewContentProps>(({ ...props }, ref) => {
+  // context
   const { rootValue } = useContext(TreeViewContext)
-  const { parent } = useContext(NodeContext) as { parent: string }
+  const { parent } = useContext(GroupContext)
 
   if(rootValue.has(parent)) {
     return (
