@@ -6,8 +6,7 @@ export interface TreeViewContextType {
   setRootValue: React.Dispatch<React.SetStateAction<Set<string>>>
   selection: string|null
   setSelection: React.Dispatch<React.SetStateAction<string|null>>
-  focus: string
-  setFocus: React.Dispatch<React.SetStateAction<Set<string>>>
+  focus: React.MutableRefObject<string>
   nodeMap: useNodeMapHook[0]
   pushToNodeMap: useNodeMapHook[1]
 }
@@ -17,8 +16,7 @@ export const TreeViewContext = createContext<TreeViewContextType>({
   setRootValue: () => {},
   selection: null,
   setSelection: () => {},
-  focus: '',
-  setFocus: () => {},
+  focus: { current: '' },
   nodeMap: { current: {} },
   pushToNodeMap: () => {},
 })
