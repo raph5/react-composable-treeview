@@ -1,5 +1,6 @@
 {
   "name": "react-composable-treeview",
+  "description": "A composable, headless, fully accessible tree view component for react",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -24,5 +25,8 @@
   },
   "peerDependencies": {
     "react": "^18.2.0"
-  }
+  },
+  "keywords": ["react", "typescript", "component", "composable", "headless", "treeview", "tree", "accessible", "accessibility", "ARIA"],
+  "author": "Raphaël Guyader",
+  "license": "ISC"
 }
