@@ -47,6 +47,10 @@
     "accessibility",
     "ARIA"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raph5/react-composable-treeview"
+  },
   "author": "Raphaël Guyader",
   "license": "ISC"
 }
