@@ -1,26 +1,37 @@
 
 # Composable Tree View
 
-## Exemple
+A composable, headless, fully accessible tree view component for react. This component is following [radix philosophy](https://github.com/radix-ui/primitives/blob/main/philosophy.md) and [ARIA authoring practices](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/). Keyboard navigation is fully supported.
+
+## Installation
+
+Installation using npm
+
+```bash
+npm install react-composable-treeview
+```
+
+## File Explorer Exemple
 
 ```tsx
+import Accordion from 'react-composable-treeview';
+
 <TreeView.Root>
-  <TreeView.Group>
+  <TreeView.Group value="/src">
     <TreeView.Trigger>
       <ChevronDownIcon />
       src
     </TreeView.Trigger>
     <TreeView.Content>
-      <TreeView.Item>index.ts</TreeView.Item>
-      <TreeView.Item>treeView.tsx</TreeView.Item>
+      <TreeView.Item value="/src/index.ts">index.ts</TreeView.Item>
+      <TreeView.Item value="/src/treeView.tsx">treeView.tsx</TreeView.Item>
     </TreeView.Content>
   </TreeView.Group>
 
-  <TreeView.Item>tsconfig.json</TreeView.Item>
-  <TreeView.Item>package.json</TreeView.Item>
+  <TreeView.Item value="/tsconfig.json">tsconfig.json</TreeView.Item>
+  <TreeView.Item value="/package.json">package.json</TreeView.Item>
 </TreeView.Root>
 ```
-
 
 ## States
 
@@ -36,14 +47,52 @@ The `selection` keep track of the curent selected item or group. There can only 
 
 The `focus` state keep track of the curent focused item or group. This state is managed the browser. This state can't be controled.
 
+## API Reference
 
-## To do
+### Root
 
-- type-ahead :
-Type a character: focus moves to the next node with a name that starts with the typed character.
-Type multiple characters in rapid succession: focus moves to the next node with a name that starts with the string of characters typed.
+Contains all the parts of an tree view
 
+| Prop          | Type                    | Default     |
+| ------------- | ----------------------- | ----------- |
+| value         | `Set<string>`           | `new Set()` |
+| defaultValue  | `Set<string>`           | `new Set()` |
+| onValueChange | `(Set<string>) => void` | -           |
+
+### Group
+
+Contains all the parts of a collapsible group.
+
+| Prop  | Type     | Default |
+| ----- | -------- | ------- |
+| value | `string` | ''      |
+
+| Data attribute | Values             |
+| -------------- | ------------------ |
+| data-state     | "open" \| "closed" |
+
+### Item
+
+Contains an item.
+
+| Prop  | Type     | Default |
+| ----- | -------- | ------- |
+| value | `string` | ''      |
+
+### Trigger
+
+Toggles the collapsed state of its associated group.
+
+### Content
+
+Contains the collapsible content for an item.
 
 ## Rescouces
 
-https://medium.com/simform-engineering/building-a-component-library-with-react-typescript-and-storybook-a-comprehensive-guide-ba189accdaf5
+[ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/)
+
+[Radix Philosophy](https://github.com/radix-ui/primitives/blob/main/philosophy.md)
+
+[Guide to building composable, headless components](https://dev.to/haribhandari/react-build-your-own-composable-headless-components-170b)
+
+[Guide to building react component lib](https://medium.com/simform-engineering/building-a-component-library-with-react-typescript-and-storybook-a-comprehensive-guide-ba189accdaf5)

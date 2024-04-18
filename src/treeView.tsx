@@ -25,7 +25,7 @@ export interface TreeViewItemProps extends React.HTMLAttributes<HTMLLIElement> {
   value: string
 }
 
-export interface TreeViewTriggerProps extends React.HTMLAttributes<HTMLButtonElement> {}
+export interface TreeViewTriggerProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export interface TreeViewContentProps extends React.HTMLAttributes<HTMLUListElement> {}
 
@@ -260,6 +260,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
         ref={composedRefs}
         role="treenode"
         aria-expanded={rootValue.has(value)}
+        data-state={rootValue.has(value) ? 'open' : 'closed'}
         aria-selected={selection == value}
         tabIndex={focus.current == value ? 0 : -1}
         onFocus={onFocusHandler}
@@ -269,7 +270,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   )
 })
 
-export const TreeViewTrigger = forwardRef<HTMLButtonElement, TreeViewTriggerProps>(({ onClick, ...props }, ref) => {
+export const TreeViewTrigger = forwardRef<HTMLDivElement, TreeViewTriggerProps>(({ onClick, ...props }, ref) => {
   // context
   const { setRootValue, setSelection } = useContext(TreeViewContext)
   const { parent } = useContext(GroupContext)
@@ -289,7 +290,7 @@ export const TreeViewTrigger = forwardRef<HTMLButtonElement, TreeViewTriggerProp
   }
 
   return (
-    <span
+    <div
       ref={ref}
       onClick={onClickHandler}
       {...props}
