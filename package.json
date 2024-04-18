@@ -2,10 +2,18 @@
   "name": "react-composable-treeview",
   "description": "A composable, headless, fully accessible tree view component for react",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build": "tsc && vite build",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.3.2",
@@ -21,12 +29,24 @@
     "react": "^18.2.0",
     "storybook": "^8.0.6",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vite-plugin-dts": "^3.8.3"
   },
   "peerDependencies": {
     "react": "^18.2.0"
   },
-  "keywords": ["react", "typescript", "component", "composable", "headless", "treeview", "tree", "accessible", "accessibility", "ARIA"],
+  "keywords": [
+    "react",
+    "typescript",
+    "component",
+    "composable",
+    "headless",
+    "treeview",
+    "tree",
+    "accessible",
+    "accessibility",
+    "ARIA"
+  ],
   "author": "Raphaël Guyader",
   "license": "ISC"
 }
