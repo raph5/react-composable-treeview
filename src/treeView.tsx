@@ -1,5 +1,5 @@
 import type React from "react";
-import { forwardRef, useCallback, useContext, useId, useRef, useState } from "react";
+import { forwardRef, useCallback, useContext, useRef, useState } from "react";
 import { TreeViewContext } from "./contexts/treeViewContext";
 import { TreeNode, useNodeMap } from "./hooks/useNodeMap";
 import { GroupContext } from "./contexts/groupContext";
@@ -39,7 +39,7 @@ function focusFirstChild(nodeMap: Record<string, TreeNode>, node: string) {
 
 function focusParent(nodeMap: Record<string, TreeNode>, node: string) {
   const parent = nodeMap[node].parent
-  if(parent != '') {
+  if(parent != '__root__') {
     nodeMap[parent].ref.current?.focus()
   }
 }
@@ -58,7 +58,7 @@ function focusPrevious(nodeMap: Record<string, TreeNode>, node: string) {
     nodeMap[sibling].ref.current?.focus()
     return
   }
-  if(parent != '') {
+  if(parent != '__root__') {
     nodeMap[parent].ref.current?.focus()
   }
 }
@@ -76,19 +76,19 @@ function focusNext(nodeMap: Record<string, TreeNode>, node: string) {
     parent = nodeMap[node].parent
     sibling = nodeMap[parent].children[nodeMap[node].index+1]
     if(sibling != undefined) break
-    if(parent == '') return
+    if(parent == '__root__') return
     node = parent
   }
   nodeMap[sibling].ref.current?.focus()
 }
 
 function focusFirst(nodeMap: Record<string, TreeNode>) {
-  const first = nodeMap[''].children[0]
+  const first = nodeMap['__root__'].children[0]
   nodeMap[first].ref.current?.focus()
 }
 
 function focusLast(nodeMap: Record<string, TreeNode>) {
-  let node = ''
+  let node = '__root__'
   let last
   while(nodeMap[node].isGroup) {
     last = nodeMap[node].children[nodeMap[node].childrenLength - 1]
@@ -179,7 +179,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
 
   return (
     <TreeViewContext.Provider value={{ rootValue, setRootValue, selection, setSelection, focus, nodeMap, pushToNodeMap }}>
-      <GroupContext.Provider value={{ parent: '', getIndex }}>
+      <GroupContext.Provider value={{ parent: '__root__', getIndex }}>
         <ul
           ref={composedRefs}
           role="tree"
@@ -212,7 +212,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
 
   const index = getIndex(value)
   pushToNodeMap(value, parent, index, false, itemRef)
-  if(focus.current == '' && parent == '' && index == 0) {
+  if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
 
@@ -250,7 +250,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
 
   const index = getIndex(value)
   pushToNodeMap(value, parent, index, true, groupRef)
-  if(focus.current == '' && parent == '' && index == 0) {
+  if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
 

@@ -18,7 +18,7 @@ export type useNodeMapHook = [
 
 export function useNodeMap(): useNodeMapHook {
   const nodeMap = useRef<Record<string, TreeNode>>({
-    '': { value: '', parent: '', children: {}, index: 0, childrenLength: 0, isGroup: true, ref: { current: null } }
+    '__root__': { value: '__root__', parent: '', children: {}, index: 0, childrenLength: 0, isGroup: true, ref: { current: null } }
   })
   
   const waitingList = useRef<Record<string, [string, string, number, boolean, React.RefObject<HTMLLIElement>][]>>({})
