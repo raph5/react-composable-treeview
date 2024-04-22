@@ -6,7 +6,7 @@ import {
   TreeViewItem
 } from "./treeView"
 export type {
-  TreeViewGroupProps as TreeViewNodeProps,
+  TreeViewGroupProps,
   TreeViewRootProps,
   TreeViewContentProps,
   TreeViewTriggerProps,
