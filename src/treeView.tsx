@@ -167,7 +167,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
 
   return (
     <TreeViewContext.Provider value={{ rootValue, setRootValue, selection, setSelection, focus, nodeMap, pushToNodeMap }}>
-      <GroupContext.Provider value={{ parent: '__root__', getIndex }}>
+      <GroupContext.Provider value={{ parent: '__root__', getIndex, depth: 0 }}>
         <ul
           ref={composedRefs}
           role="tree"
@@ -183,7 +183,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
 export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, onFocus, ...props }, ref) => {  
   // context
   const { selection, focus, nodeMap, pushToNodeMap } = useContext(TreeViewContext)
-  const { parent, getIndex } = useContext(GroupContext)
+  const { parent, getIndex, depth } = useContext(GroupContext)
   
   // refs
   const itemRef = useRef<HTMLLIElement>(null)
@@ -211,6 +211,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
       aria-selected={selection == value}
       tabIndex={focus.current == value ? 0 : -1}
       onFocus={onFocusHandler}
+      data-depth={depth}
       {...props}
     />
   )
@@ -221,7 +222,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
 
   // context
   const { rootValue, selection, focus, nodeMap, pushToNodeMap } = useContext(TreeViewContext)
-  const { parent, getIndex } = useContext(GroupContext)
+  const { parent, getIndex, depth } = useContext(GroupContext)
 
   // refs
   const groupRef = useRef<HTMLLIElement>(null)
@@ -243,12 +244,13 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   }
 
   return (
-    <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex }}>
+    <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex, depth: depth+1 }}>
       <li
         ref={composedRefs}
         role="treenode"
         aria-expanded={rootValue.has(value)}
         data-state={rootValue.has(value) ? 'open' : 'closed'}
+        data-depth={depth}
         aria-selected={selection == value}
         tabIndex={focus.current == value ? 0 : -1}
         onFocus={onFocusHandler}

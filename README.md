@@ -70,6 +70,7 @@ Contains all the parts of a collapsible group.
 | Data attribute | Values             |
 | -------------- | ------------------ |
 | data-state     | "open" \| "closed" |
+| depth          | number             |
 
 ### Item
 
@@ -78,6 +79,10 @@ Contains an item.
 | Prop  | Type     | Default |
 | ----- | -------- | ------- |
 | value | `string` | ''      |
+
+| Data attribute | Values |
+| -------------- | ------ |
+| depth          | number |
 
 ### Trigger
 
