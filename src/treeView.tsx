@@ -122,19 +122,13 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
           focusFirstChild(nodeMap.current, focus.current)
         }
         else {
-          setRootValue(prev => {
-            prev.add(focus.current)
-            return new Set(prev)
-          })
+          setRootValue(prev => new Set([...prev, focus.current]))
         }
         break
 
       case 'ArrowLeft':
         if(rootValue.has(focus.current)) {
-          setRootValue(prev => {
-            prev.delete(focus.current)
-            return new Set(prev)
-          })
+          setRootValue(prev => new Set([...prev].filter(v => v !== focus.current)))
         }
         else {
           focusParent(nodeMap.current, focus.current)
@@ -160,16 +154,10 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
       case 'Enter':
         setSelection(focus.current)
         if(rootValue.has(focus.current)) {
-          setRootValue(prev => {
-            prev.delete(focus.current)
-            return new Set(prev)
-          })
+          setRootValue(prev => new Set([...prev].filter(v => v !== focus.current)))
         }
         else {
-          setRootValue(prev => {
-            prev.add(focus.current)
-            return new Set(prev)
-          })
+          setRootValue(prev => new Set([...prev, focus.current]))
         }
         break
     }
@@ -230,11 +218,11 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
 
 export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ value, onFocus, ...props }, ref) => {
   const chilGetIndex = useIndex()
-  
+
   // context
   const { rootValue, selection, focus, nodeMap, pushToNodeMap } = useContext(TreeViewContext)
   const { parent, getIndex } = useContext(GroupContext)
-  
+
   // refs
   const groupRef = useRef<HTMLLIElement>(null)
   const composedRefs = useComposedRefs(groupRef, ref)
@@ -274,18 +262,17 @@ export const TreeViewTrigger = forwardRef<HTMLDivElement, TreeViewTriggerProps>(
   // context
   const { setRootValue, setSelection } = useContext(TreeViewContext)
   const { parent } = useContext(GroupContext)
-  
+
   const onClickHandler = composeEventHandlers(onClick, handleClick)
   function handleClick() {
     setSelection(parent)
     setRootValue(prev => {
       if(prev.has(parent)) {
-        prev.delete(parent)
+        return new Set([...prev].filter(v => v !== parent))
       }
       else {
-        prev.add(parent)
+        return new Set([...prev, parent])
       }
-      return new Set(prev)
     })
   }
 
