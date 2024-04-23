@@ -203,7 +203,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
     nodeMap.current?.[focus.current].ref.current?.setAttribute('tabindex', '-1')
     itemRef.current?.setAttribute('tabindex', '0')
     focus.current = value
-    event.preventDefault()
+    event.stopPropagation()
   }
   function handleClick() {
     setSelection(value)

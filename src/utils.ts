@@ -22,5 +22,5 @@ export function composeEventHandlers<E>(
     }
 
     return returnValue
-  };
+  }
 }
