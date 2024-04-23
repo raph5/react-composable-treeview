@@ -118,6 +118,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
     switch(event.key) {
       case 'ArrowRight':
         if(!nodeMap.current[focus.current].isGroup) break
+        event.preventDefault()
         if(rootValue.has(focus.current)) {
           focusFirstChild(nodeMap.current, focus.current)
         }
@@ -127,6 +128,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
         break
 
       case 'ArrowLeft':
+        event.preventDefault()
         if(rootValue.has(focus.current)) {
           setRootValue(prev => new Set([...prev].filter(v => v !== focus.current)))
         }
@@ -136,22 +138,27 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
         break
 
       case 'ArrowUp':
+        event.preventDefault()
         focusPrevious(nodeMap.current, focus.current)
         break
         
       case 'ArrowDown':  
+        event.preventDefault()
         focusNext(nodeMap.current, focus.current)
         break
 
       case 'Home':
+        event.preventDefault()
         focusFirst(nodeMap.current)
         break
 
       case 'End':
+        event.preventDefault()
         focusLast(nodeMap.current)
         break
 
       case 'Enter':
+        event.preventDefault()
         setSelection(focus.current)
         if(rootValue.has(focus.current)) {
           setRootValue(prev => new Set([...prev].filter(v => v !== focus.current)))
