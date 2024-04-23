@@ -187,9 +187,9 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
   )
 })
 
-export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, onFocus, ...props }, ref) => {  
+export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, onFocus, onClick, ...props }, ref) => {  
   // context
-  const { selection, focus, nodeMap, pushToNodeMap } = useContext(TreeViewContext)
+  const { selection, setSelection, focus, nodeMap, pushToNodeMap } = useContext(TreeViewContext)
   const { parent, getIndex, depth } = useContext(GroupContext)
   
   // refs
@@ -198,11 +198,15 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
 
   // handlers
   const onFocusHandler = composeEventHandlers(onFocus, handleFocus)
+  const onClickHandler = composeEventHandlers(onClick, handleClick)
   function handleFocus(event: React.FocusEvent) {
     nodeMap.current?.[focus.current].ref.current?.setAttribute('tabindex', '-1')
     itemRef.current?.setAttribute('tabindex', '0')
     focus.current = value
     event.preventDefault()
+  }
+  function handleClick() {
+    setSelection(value)
   }
 
   const index = getIndex(value)
@@ -218,6 +222,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
       aria-selected={selection == value}
       tabIndex={focus.current == value ? 0 : -1}
       onFocus={onFocusHandler}
+      onClick={onClickHandler}
       data-depth={depth}
       {...props}
     />
