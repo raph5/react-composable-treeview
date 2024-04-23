@@ -246,7 +246,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
     nodeMap.current?.[focus.current].ref.current?.setAttribute('tabindex', '-1')
     groupRef.current?.setAttribute('tabindex', '0')
     focus.current = value
-    event.preventDefault()
+    event.stopPropagation()
   }
 
   const index = getIndex(value)
