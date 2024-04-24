@@ -65,7 +65,7 @@ Contains all the parts of a collapsible group.
 
 | Prop  | Type     | Default |
 | ----- | -------- | ------- |
-| value | `string` | ''      |
+| value | `string` | ""      |
 
 | Data attribute | Values             |
 | -------------- | ------------------ |
@@ -78,7 +78,7 @@ Contains an item.
 
 | Prop  | Type     | Default |
 | ----- | -------- | ------- |
-| value | `string` | ''      |
+| value | `string` | ""      |
 
 | Data attribute | Values |
 | -------------- | ------ |
