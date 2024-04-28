@@ -260,9 +260,9 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
       <li
         ref={composedRefs}
         role="treenode"
-        aria-expanded={rootValue.has(value)}
         data-state={rootValue.has(value) ? 'open' : 'closed'}
         data-depth={depth}
+        aria-expanded={rootValue.has(value)}
         aria-selected={selection == value}
         tabIndex={focus.current == value ? 0 : -1}
         onFocus={onFocusHandler}

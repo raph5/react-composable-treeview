@@ -58,31 +58,37 @@ Contains all the parts of an tree view
 | value         | `Set<string>`           | `new Set()` |
 | defaultValue  | `Set<string>`           | `new Set()` |
 | onValueChange | `(Set<string>) => void` | -           |
+| draggable     | `boolean`               | `false`     |
 
 ### Group
 
 Contains all the parts of a collapsible group.
 
-| Prop  | Type     | Default |
-| ----- | -------- | ------- |
-| value | `string` | ""      |
+| Prop      | Type      | Default |
+| --------- | --------- | ------- |
+| value     | `string`  | ""      |
+| draggable | `boolean` | `false` |
 
 | Data attribute | Values             |
 | -------------- | ------------------ |
 | data-state     | "open" \| "closed" |
-| depth          | number             |
+| data-depth     | number             |
+| aria-selected  | "true" \| "false"  |
 
 ### Item
 
 Contains an item.
 
-| Prop  | Type     | Default |
-| ----- | -------- | ------- |
-| value | `string` | ""      |
+| Prop      | Type      | Default |
+| --------- | --------- | ------- |
+| value     | `string`  | ""      |
+| draggable | `boolean` | `false` |
 
-| Data attribute | Values |
-| -------------- | ------ |
-| depth          | number |
+| Data attribute | Values            |
+| -------------- | ----------------- |
+| data-depth     | number            |
+| aria-selected  | "true" \| "false" |
+| aria-expanded  | "true" \| "false" |
 
 ### Trigger
 

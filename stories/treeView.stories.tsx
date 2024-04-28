@@ -12,6 +12,15 @@ export const FileExplorer: StoryObj = {
 
     return (
       <TreeView.Root value={value} onValueChange={setValue}>
+        <TreeView.Group value="/dist">
+          <TreeView.Trigger>
+            dist
+          </TreeView.Trigger>
+          <TreeView.Content>
+            <TreeView.Item value="/dist/index.js">index.js</TreeView.Item>
+          </TreeView.Content>
+        </TreeView.Group>
+
         <TreeView.Group value="/src">
           <TreeView.Trigger>
             src
@@ -21,6 +30,7 @@ export const FileExplorer: StoryObj = {
             <TreeView.Item value="/src/treeView.tsx">treeView.tsx</TreeView.Item>
           </TreeView.Content>
         </TreeView.Group>
+
         <TreeView.Item value="/tsconfig.json">tsconfig.json</TreeView.Item>
         <TreeView.Item value="/package.json">package.json</TreeView.Item>
       </TreeView.Root>
