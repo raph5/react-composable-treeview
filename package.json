@@ -1,7 +1,7 @@
 {
   "name": "react-composable-treeview",
   "description": "A composable, headless, fully accessible tree view component for react",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
