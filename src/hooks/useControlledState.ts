@@ -13,7 +13,7 @@ export function useControlledState<T>(controlledValue?: T, onChange?: (v: T) => 
     // c.f. this issue
     // https://github.com/microsoft/TypeScript/issues/37663
     // @ts-ignore
-    const nextValue: T = typeof nextState == 'function' ? nextState(stateValue) : nextState
+    const nextValue: T = typeof nextState == 'function' ? nextState(effectiveValue) : nextState
 
     if(onChange) {
       onChange(nextValue)
