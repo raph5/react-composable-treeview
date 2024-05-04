@@ -1,17 +1,16 @@
-import { useCallback, useRef } from "react"
 
 export type useIndexType = (id: string) => number  // getIndex
 
 export function useIndex(): useIndexType {
-  const index = useRef(-1)
-  const descendantsMap = useRef<Record<string, number>>({})
+  let index = -1
+  const descendantsMap: Record<string, number> = {}
   
-  const getIndex = useCallback((id: string) => {
-    if(descendantsMap.current[id] == undefined) {
-      descendantsMap.current[id] = ++index.current
+  function getIndex(id: string) {
+    if(descendantsMap[id] == undefined) {
+      descendantsMap[id] = ++index
     }
-    return descendantsMap.current[id]
-  }, [])
+    return descendantsMap[id]
+  }
 
   return getIndex
 }
