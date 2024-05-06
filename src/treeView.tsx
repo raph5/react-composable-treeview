@@ -105,12 +105,17 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
 
   // states
   const [rootValue, setRootValue] = useControlledState(controlledValue, onValueChange, defaultValue ?? new Set())
-  const [selection, setSelection] = useState<string|null>(null)
+  const [selection, setSelection] = useState<string>('')
 
   // refs
   const rootRef = useRef<HTMLUListElement>(null)
   const composedRefs = useComposedRefs(rootRef, ref)
   const focus = useRef('')
+  if(focus.current != '' && !nodeMap.current?.[focus.current]) {
+    // after removing a focused node reset focus
+    // we dont need to reset selection as dont use selection that mutch
+    focus.current = ''
+  }
 
   const handleKeydown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
     if(!TREE_KEYS.includes(event.key) || !nodeMap.current) return
@@ -200,7 +205,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   const onFocusHandler = composeEventHandlers(onFocus, handleFocus)
   const onClickHandler = composeEventHandlers(onClick, handleClick)
   function handleFocus(event: React.FocusEvent) {
-    nodeMap.current?.[focus.current].ref.current?.setAttribute('tabindex', '-1')
+    nodeMap.current?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
     itemRef.current?.setAttribute('tabindex', '0')
     focus.current = value
     event.stopPropagation()
@@ -243,7 +248,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   // handlers
   const onFocusHandler = composeEventHandlers(onFocus, handleFocus)
   function handleFocus(event: React.FocusEvent) {
-    nodeMap.current?.[focus.current].ref.current?.setAttribute('tabindex', '-1')
+    nodeMap.current?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
     groupRef.current?.setAttribute('tabindex', '0')
     focus.current = value
     event.stopPropagation()

@@ -5,7 +5,7 @@ export interface TreeViewContextType {
   rootValue: Set<string>
   setRootValue: React.Dispatch<React.SetStateAction<Set<string>>>
   selection: string|null
-  setSelection: React.Dispatch<React.SetStateAction<string|null>>
+  setSelection: React.Dispatch<React.SetStateAction<string>>
   focus: React.MutableRefObject<string>
   nodeMap: useNodeMapHook[0]
   pushToNodeMap: useNodeMapHook[1]
