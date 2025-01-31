@@ -1,5 +1,5 @@
 import type React from "react";
-import { forwardRef, useCallback, useContext, useRef, useState } from "react";
+import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { TreeViewContext } from "./contexts/treeViewContext";
 import { TreeNode, useNodeMap } from "./hooks/useNodeMap";
 import { GroupContext } from "./contexts/groupContext";
@@ -111,11 +111,6 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
   const rootRef = useRef<HTMLUListElement>(null)
   const composedRefs = useComposedRefs(rootRef, ref)
   const focus = useRef('')
-  if(focus.current != '' && !nodeMap.current?.[focus.current]) {
-    // after removing a focused node reset focus
-    // we dont need to reset selection as dont use selection that mutch
-    focus.current = ''
-  }
 
   const handleKeydown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
     if(!TREE_KEYS.includes(event.key) || !nodeMap.current) return
@@ -220,6 +215,13 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
     focus.current = value
   }
 
+  // unmount
+  useEffect(() => () => {
+    if(focus.current == value) {
+      focus.current = ''
+    }
+  }, [])
+
   return (
     <li
       ref={composedRefs}
@@ -259,6 +261,13 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
+
+  // unmount
+  useEffect(() => () => {
+    if(focus.current == value) {
+      focus.current = ''
+    }
+  }, [])
 
   return (
     <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex, depth: depth+1 }}>
