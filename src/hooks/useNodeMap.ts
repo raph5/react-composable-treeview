@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React from "react"
 
 export interface TreeNode {
   value: string
@@ -12,21 +12,20 @@ export interface TreeNode {
 
 
 export type useNodeMapHook = [
-  React.RefObject<Record<string, TreeNode>>,                                                                     // nodeMap.current
+  Record<string, TreeNode>,                                                                                      // nodeMap.current
   (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => void  // pushToNodeMap
 ]
 
 export function useNodeMap(): useNodeMapHook {
-  const nodeMap = useRef<Record<string, TreeNode>>({})
-  nodeMap.current = {
+  const nodeMap: Record<string, TreeNode> = {
     __root__: { value: '__root__', parent: '', children: {}, index: 0, childrenLength: 0, isGroup: true, ref: { current: null } }
   }
 
   const pushToNodeMap = (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => {
-    nodeMap.current[value] = { value, parent, children: {}, childrenLength: 0, index, isGroup, ref }
-    nodeMap.current[parent].children[index] = value
-    if(index+1 > nodeMap.current[parent].childrenLength || nodeMap.current[nodeMap.current[parent].childrenLength-1] == undefined) {
-      nodeMap.current[parent].childrenLength = index+1
+    nodeMap[value] = { value, parent, children: {}, childrenLength: 0, index, isGroup, ref }
+    nodeMap[parent].children[index] = value
+    if(index+1 > nodeMap[parent].childrenLength || nodeMap[nodeMap[parent].childrenLength-1] == undefined) {
+      nodeMap[parent].childrenLength = index+1
     }
   }
 

@@ -113,14 +113,14 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
   const focus = useRef('')
 
   const handleKeydown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
-    if(!TREE_KEYS.includes(event.key) || !nodeMap.current) return
+    if(!TREE_KEYS.includes(event.key) || !nodeMap) return
 
     switch(event.key) {
       case 'ArrowRight':
-        if(!nodeMap.current[focus.current].isGroup) break
+        if(!nodeMap[focus.current].isGroup) break
         event.preventDefault()
         if(rootValue.has(focus.current)) {
-          focusFirstChild(nodeMap.current, focus.current)
+          focusFirstChild(nodeMap, focus.current)
         }
         else {
           setRootValue(prev => new Set([...prev, focus.current]))
@@ -133,28 +133,28 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
           setRootValue(prev => new Set([...prev].filter(v => v !== focus.current)))
         }
         else {
-          focusParent(nodeMap.current, focus.current)
+          focusParent(nodeMap, focus.current)
         }
         break
 
       case 'ArrowUp':
         event.preventDefault()
-        focusPrevious(nodeMap.current, focus.current)
+        focusPrevious(nodeMap, focus.current)
         break
         
       case 'ArrowDown':  
         event.preventDefault()
-        focusNext(nodeMap.current, focus.current)
+        focusNext(nodeMap, focus.current)
         break
 
       case 'Home':
         event.preventDefault()
-        focusFirst(nodeMap.current)
+        focusFirst(nodeMap)
         break
 
       case 'End':
         event.preventDefault()
-        focusLast(nodeMap.current)
+        focusLast(nodeMap)
         break
 
       case 'Enter':
@@ -200,7 +200,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   const onFocusHandler = composeEventHandlers(onFocus, handleFocus)
   const onClickHandler = composeEventHandlers(onClick, handleClick)
   function handleFocus(event: React.FocusEvent) {
-    nodeMap.current?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
+    nodeMap?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
     itemRef.current?.setAttribute('tabindex', '0')
     focus.current = value
     event.stopPropagation()
@@ -250,7 +250,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   // handlers
   const onFocusHandler = composeEventHandlers(onFocus, handleFocus)
   function handleFocus(event: React.FocusEvent) {
-    nodeMap.current?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
+    nodeMap?.[focus.current]?.ref.current?.setAttribute('tabindex', '-1')
     groupRef.current?.setAttribute('tabindex', '0')
     focus.current = value
     event.stopPropagation()

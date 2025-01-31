@@ -17,6 +17,6 @@ export const TreeViewContext = createContext<TreeViewContextType>({
   selection: null,
   setSelection: () => {},
   focus: { current: '' },
-  nodeMap: { current: {} },
+  nodeMap: {},
   pushToNodeMap: () => {},
 })
