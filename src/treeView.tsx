@@ -225,7 +225,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   return (
     <li
       ref={composedRefs}
-      role="treenode"
+      role="treeitem"
       aria-selected={selection == value}
       tabIndex={focus.current == value ? 0 : -1}
       onFocus={onFocusHandler}
@@ -273,7 +273,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
     <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex, depth: depth+1 }}>
       <li
         ref={composedRefs}
-        role="treenode"
+        role="treeitem"
         data-state={rootValue.has(value) ? 'open' : 'closed'}
         data-depth={depth}
         aria-expanded={rootValue.has(value)}
