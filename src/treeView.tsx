@@ -15,6 +15,7 @@ export interface TreeViewRootProps extends Omit<React.HTMLAttributes<HTMLUListEl
   value?: Set<string>
   onValueChange?: (v: Set<string>) => void
   defaultValue?: Set<string>
+  defaultSelection?: string
 }
 
 export interface TreeViewGroupProps extends React.HTMLAttributes<HTMLLIElement> {
@@ -99,13 +100,13 @@ function focusLast(nodeMap: Record<string, TreeNode>) {
 }
 
 
-export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ value: controlledValue, onValueChange, defaultValue, onKeyDown, ...props }, ref) => {
+export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ value: controlledValue, onValueChange, defaultValue, defaultSelection, onKeyDown, ...props }, ref) => {
   const [nodeMap, pushToNodeMap] = useNodeMap()
   const getIndex = useIndex()
 
   // states
   const [rootValue, setRootValue] = useControlledState(controlledValue, onValueChange, defaultValue ?? new Set())
-  const [selection, setSelection] = useState<string>('')
+  const [selection, setSelection] = useState<string>(defaultSelection ?? '')
 
   // refs
   const rootRef = useRef<HTMLUListElement>(null)
