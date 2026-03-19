@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 
 export interface TreeNode {
   value: string
@@ -12,22 +12,38 @@ export interface TreeNode {
 
 
 export type useNodeMapHook = [
-  Record<string, TreeNode>,                                                                                      // nodeMap.current
-  (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => void  // pushToNodeMap
+  React.RefObject<Record<string, TreeNode>>,  // nodeMap
+  (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => void,  // registerNode
+  (value: string) => void,  // removeNode
 ]
 
 export function useNodeMap(): useNodeMapHook {
-  const nodeMap: Record<string, TreeNode> = {
+  const nodeMap: React.RefObject<Record<string, TreeNode>> = useRef({
     __root__: { value: '__root__', parent: '', children: {}, index: 0, childrenLength: 0, isGroup: true, ref: { current: null } }
-  }
+  })
 
-  const pushToNodeMap = (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => {
-    nodeMap[value] = { value, parent, children: {}, childrenLength: 0, index, isGroup, ref }
-    nodeMap[parent].children[index] = value
-    if(index+1 > nodeMap[parent].childrenLength || nodeMap[nodeMap[parent].childrenLength-1] == undefined) {
-      nodeMap[parent].childrenLength = index+1
+  const registerNode = (value: string, parent: string, index: number, isGroup: boolean, ref: React.RefObject<HTMLLIElement>) => {
+    if (nodeMap.current == null) return
+    const map = nodeMap.current
+
+    map[value] = { value, parent, children: {}, childrenLength: 0, index, isGroup, ref }
+    map[parent].children[index] = value
+    if(index+1 > map[parent].childrenLength || map[map[parent].childrenLength-1] == undefined) {
+      map[parent].childrenLength = index+1
     }
   }
 
-  return [nodeMap, pushToNodeMap]
+  const removeNode = (value: string) => {
+    if (nodeMap.current == null) return
+
+    const node = nodeMap.current[value]
+    const parentNode = nodeMap.current[node.parent]
+    delete parentNode.children[node.index]
+    while (parentNode.childrenLength > 0 && parentNode.children[parentNode.childrenLength-1] == undefined) {
+      parentNode.childrenLength -= 1
+    }
+    delete nodeMap.current[value]
+  }
+
+  return [nodeMap, registerNode, removeNode]
 }

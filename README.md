@@ -53,12 +53,13 @@ The `focus` state keep track of the curent focused item or group. This state is 
 
 Contains all the parts of an tree view
 
-| Prop          | Type                    | Default     |
-| ------------- | ----------------------- | ----------- |
-| value         | `Set<string>`           | `new Set()` |
-| defaultValue  | `Set<string>`           | `new Set()` |
-| onValueChange | `(Set<string>) => void` | -           |
-| draggable     | `boolean`               | `false`     |
+| Prop              | Type                    | Default     |
+| ----------------- | ----------------------- | ----------- |
+| value             | `Set<string>`           | `new Set()` |
+| defaultValue      | `Set<string>`           | `new Set()` |
+| defaultSelection  | `string`                | -           |
+| onValueChange     | `(Set<string>) => void` | -           |
+| draggable         | `boolean`               | `false`     |
 
 ### Group
 
