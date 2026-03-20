@@ -185,11 +185,11 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   }
 
   const index = getIndex(value)
-  registerNode(value, parent, index, false, itemRef)
   if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
   useEffect(() => {
+    registerNode(value, parent, index, false, itemRef)
     return () => removeNode(value)
   }, [])
 
