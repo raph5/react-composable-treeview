@@ -1,7 +1,7 @@
 import type React from "react";
 import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { TreeViewContext } from "./contexts/treeViewContext";
-import { getFirstChild, getFirstNode, getLastNode, getPreviousNode, useNodeMap, useNodeMapHook } from "./hooks/useNodeMap";
+import { getFirstChild, getFirstNode, getLastNode, getNextNode, getPreviousNode, useNodeMap, useNodeMapHook } from "./hooks/useNodeMap";
 import { GroupContext } from "./contexts/groupContext";
 import { useControlledState } from "./hooks/useControlledState";
 import { composeEventHandlers } from "./utils";
@@ -53,7 +53,7 @@ function focusPrevious(nodeMap: useNodeMapHook[0], node: string) {
 }
 
 function focusNext(nodeMap: useNodeMapHook[0], node: string) {
-  const next = getPreviousNode(nodeMap, node)
+  const next = getNextNode(nodeMap, node)
   if (next && next != '__root__') {
     nodeMap.current?.get(next)?.ref.current?.focus()
   }

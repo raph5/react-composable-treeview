@@ -41,6 +41,21 @@ export function getFirstChild(nodeMap: useNodeMapHook[0], value: string): string
   return ''
 }
 
+function getPreviousSiblingNode(nodeMap: useNodeMapHook[0], value: string): string {
+  if (!nodeMap.current) return ''
+  const node = nodeMap.current.get(value)
+  if (node) {
+    for (const [_, n] of nodeMap.current) {
+      if (n.parent == node.parent && n.index == node.index - 1) {
+        return n.value
+      }
+    }
+    return ''
+  } else {
+    return ''
+  }
+}
+
 export function getPreviousNode(nodeMap: useNodeMapHook[0], value: string): string {
   if (!nodeMap.current) return ''
   const node = nodeMap.current.get(value)
@@ -48,12 +63,15 @@ export function getPreviousNode(nodeMap: useNodeMapHook[0], value: string): stri
     if (node.index == 0) {
       return node.parent
     } else {
-      for (const [_, n] of nodeMap.current) {
-        if (n.parent == node.parent && n.index == node.index - 1) {
+      let n = nodeMap.current.get(getPreviousSiblingNode(nodeMap, node.value))
+      while (n && n.isGroup) {
+        const lastChild = nodeMap.current.get(getLastChild(nodeMap, n.value))
+        if (!lastChild) {
           return n.value
         }
+        n = lastChild
       }
-      return ''
+      return n ? n.value : ''
     }
   } else {
     return ''
@@ -80,23 +98,23 @@ export function getNextNode(nodeMap: useNodeMapHook[0], value: string): string {
   const node = nodeMap.current.get(value)
   if (node) {
     if (node.isGroup) {
-      return getFirstChild(nodeMap, value)
-    } else {
-      let n = node
-      for (let i = 0; i < 1_000_000; ++i) {  // avoid infinite loop
-        const parentSibling = getNextSiblingNode(nodeMap, n.parent)
-        if (parentSibling) {
-          return parentSibling
-        } else {
-          const parent = nodeMap.current.get(n.parent)
-          if (!parent || n.value == '__root__') {
-            return ''
-          }
-          n = parent
-        }
+      const firstChild = getFirstChild(nodeMap, value)
+      if (firstChild) {
+        return firstChild
       }
-      console.error("getNextNode: maximum tree depth of 1 million reached")
-      return ''
+    }
+    let n = node
+    while (true) {
+      const sibling = getNextSiblingNode(nodeMap, n.value)
+      if (sibling) {
+        return sibling
+      } else {
+        const parent = nodeMap.current.get(n.parent)
+        if (!parent || n.value == '__root__') {
+          return ''
+        }
+        n = parent
+      }
     }
   } else {
     return ''
@@ -129,9 +147,10 @@ export function getLastNode(nodeMap: useNodeMapHook[0]) {
   let n = nodeMap.current.get('__root__')
   while (n && n.isGroup) {
     const lastChild = nodeMap.current.get(getLastChild(nodeMap, n.value))
-    if (lastChild) {
-      n = lastChild
+    if (!lastChild) {
+      return n.value
     }
+    n = lastChild
   }
   return n ? n.value : ''
 }
