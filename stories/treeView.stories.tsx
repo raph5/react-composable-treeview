@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import TreeView from '../src/index'
 import React, { useRef, useState } from 'react'
 
