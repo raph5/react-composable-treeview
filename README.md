@@ -65,9 +65,14 @@ Contains all the parts of an tree view
 
 Contains all the parts of a collapsible group.
 
+The index property is required for keybinding to work. In a previous version of
+this package we tryed to infer the index but this was brittle and non-reactive.
+Now the package user has to specify the index itself.
+
 | Prop      | Type      | Default |
 | --------- | --------- | ------- |
 | value     | `string`  | ""      |
+| index     | `number`  | -       |
 | draggable | `boolean` | `false` |
 
 | Data attribute | Values             |
@@ -80,9 +85,14 @@ Contains all the parts of a collapsible group.
 
 Contains an item.
 
+The index property is required for keybinding to work. In a previous version of
+this package we tryed to infer the index but this was brittle and non-reactive.
+Now the package user has to specify the index itself.
+
 | Prop      | Type      | Default |
 | --------- | --------- | ------- |
 | value     | `string`  | ""      |
+| index     | `number`  | -       |
 | draggable | `boolean` | `false` |
 
 | Data attribute | Values            |

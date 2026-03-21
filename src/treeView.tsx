@@ -6,7 +6,6 @@ import { GroupContext } from "./contexts/groupContext";
 import { useControlledState } from "./hooks/useControlledState";
 import { composeEventHandlers } from "./utils";
 import { useComposedRefs } from "./hooks/useComposedRefs";
-import { useIndex } from "./hooks/useIndex";
 
 const TREE_KEYS = [ 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'Home', 'End', 'Enter' ]
 
@@ -20,10 +19,12 @@ export interface TreeViewRootProps extends Omit<React.HTMLAttributes<HTMLUListEl
 
 export interface TreeViewGroupProps extends React.HTMLAttributes<HTMLLIElement> {
   value: string
+  index: number
 }
 
 export interface TreeViewItemProps extends React.HTMLAttributes<HTMLLIElement> {
   value: string
+  index: number
 }
 
 export interface TreeViewTriggerProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -76,7 +77,6 @@ function focusLast(nodeMap: useNodeMapHook[0]) {
 
 export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ value: controlledValue, onValueChange, defaultValue, defaultSelection, onKeyDown, ...props }, ref) => {
   const [nodeMap, registerNode, removeNode] = useNodeMap()
-  const getIndex = useIndex()
 
   // states
   const [rootValue, setRootValue] = useControlledState(controlledValue, onValueChange, defaultValue ?? new Set())
@@ -149,7 +149,7 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
 
   return (
     <TreeViewContext.Provider value={{ rootValue, setRootValue, selection, setSelection, focus, nodeMap, registerNode, removeNode }}>
-      <GroupContext.Provider value={{ parent: '__root__', getIndex, depth: 0 }}>
+      <GroupContext.Provider value={{ parent: '__root__', depth: 0 }}>
         <ul
           ref={composedRefs}
           role="tree"
@@ -162,10 +162,10 @@ export const TreeViewRoot = forwardRef<HTMLUListElement, TreeViewRootProps>(({ v
   )
 })
 
-export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, onFocus, onClick, ...props }, ref) => {  
+export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ value, index, onFocus, onClick, ...props }, ref) => {  
   // context
   const { selection, setSelection, focus, nodeMap, registerNode, removeNode } = useContext(TreeViewContext)
-  const { parent, getIndex, depth } = useContext(GroupContext)
+  const { parent, depth } = useContext(GroupContext)
   
   // refs
   const itemRef = useRef<HTMLLIElement>(null)
@@ -184,7 +184,6 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
     setSelection(value)
   }
 
-  const index = getIndex(value)
   if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
@@ -214,12 +213,10 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   )
 })
 
-export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ value, onFocus, ...props }, ref) => {
-  const chilGetIndex = useIndex()
-
+export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ value, index, onFocus, ...props }, ref) => {
   // context
   const { rootValue, selection, focus, nodeMap, registerNode, removeNode } = useContext(TreeViewContext)
-  const { parent, getIndex, depth } = useContext(GroupContext)
+  const { parent, depth } = useContext(GroupContext)
 
   // refs
   const groupRef = useRef<HTMLLIElement>(null)
@@ -234,7 +231,6 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
     event.stopPropagation()
   }
 
-  const index = getIndex(value)
   if(focus.current == '' && parent == '__root__' && index == 0) {
     focus.current = value
   }
@@ -251,7 +247,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   }, [])
 
   return (
-    <GroupContext.Provider value={{ parent: value, getIndex: chilGetIndex, depth: depth+1 }}>
+    <GroupContext.Provider value={{ parent: value, depth: depth+1 }}>
       <li
         ref={composedRefs}
         role="treeitem"
