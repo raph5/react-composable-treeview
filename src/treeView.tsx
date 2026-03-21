@@ -190,7 +190,7 @@ export const TreeViewItem = forwardRef<HTMLLIElement, TreeViewItemProps>(({ valu
   useEffect(() => {
     registerNode(value, parent, index, false, itemRef)
     return () => removeNode(value)
-  }, [])
+  }, [value, parent, index])
 
   // unmount
   useEffect(() => () => {
@@ -237,7 +237,7 @@ export const TreeViewGroup = forwardRef<HTMLLIElement, TreeViewGroupProps>(({ va
   useEffect(() => {
     registerNode(value, parent, index, true, groupRef)
     return () => removeNode(value)
-  }, [])
+  }, [value, parent, index])
 
   // unmount
   useEffect(() => () => {
